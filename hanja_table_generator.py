@@ -81,6 +81,7 @@ org_list = org_input.split(", ")        # newline 들어간 애들은 splitlines
 nlist_2 = []
 for i in range(len(org_list)):
     nlist_2.append(org_list[i].split(" ", 1))   # maxsplit = 1
+is_odd = len(nlist_2)%2                 # 홀수 여부 판단
 
 nlist_4 = four2two(nlist_2)
 for j in range(len(nlist_4)):
@@ -90,8 +91,8 @@ for j in range(len(nlist_4)):
 generate_pdf(data, name)
 
 # preprocessing
-del nlist_2[0]      # remove header
-is_odd = len(nlist_2)%2
+if is_odd:                                  # 요소의 홀수 여부 판단
+    del nlist_2[len(nlist_2)-1]
 
 # shuffle
 while True:
@@ -102,14 +103,16 @@ while True:
         data = [
             ["한자", "훈음", "한자", "훈음"]        # reset
         ]
+
         rnd_list = rndmz.listshuffle(nlist_2)     # shuffle
-        if is_odd:                                # 요소의 홀수 여부 판단
+        if is_odd:                                  # 요소의 홀수 여부 판단
             rnd_list.append([' ', ' '])
 
         new_nlist_4 = four2two(rnd_list)
         for k in range(len(new_nlist_4)):
             data.append(new_nlist_4[k])
         generate_pdf(data, name)    # generate PDF file
+
     elif c_shuffle == 'n' or c_shuffle == 'N':
         print("\nprogram ended.")
         break
