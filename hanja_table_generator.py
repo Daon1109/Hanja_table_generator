@@ -4,12 +4,14 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib import colors
+import randomizor as rndmz
 
 
 # 2차원 리스트(4*n)를 입력받고 새로 생성한 PDF 파일에 4열 표로 출력
-def generate_pdf(table_data, filename="C:/Coding/doodles/hanja_table.pdf"):
+def generate_pdf(table_data, name):
 
     # PDF 파일 & 표 생성
+    filename = f"C:/Coding/doodles/hanja_table_{name}.pdf"
     pdf = SimpleDocTemplate(filename, pagesize=A4)
     table = Table(
         table_data,
@@ -67,12 +69,15 @@ def four2two(nlist_2):
 #################### Execution ####################
 # 메인 입력 데이터
 data = [
-    ["한자", "훈음", "한자", "훈음"],       # header
+    ["한자", "훈음", "한자", "훈음"]       # header
 ]
+# shuffle에 쓸거
+name = "original"
+cnt = 1
 
 # 입력 및 전처리
 org_input = input("Input: ")
-org_list = org_input.split(", ")
+org_list = org_input.split(", ")        # newline 들어간 애들은 splitlines()로 나눌 수 있음
 nlist_2 = []
 for i in range(len(org_list)):
     nlist_2.append(org_list[i].split(" ", 1))   # maxsplit = 1
@@ -81,6 +86,32 @@ nlist_4 = four2two(nlist_2)
 for j in range(len(nlist_4)):
     data.append(nlist_4[j])
 
-
 # generate PDF file
-generate_pdf(data)
+generate_pdf(data, name)
+
+# preprocessing
+del nlist_2[0]      # remove header
+is_odd = len(nlist_2)%2
+
+# shuffle
+while True:
+    c_shuffle = input("\nshuffle and create new file? (y/n): ")
+    if c_shuffle == 'y' or c_shuffle == 'Y':
+        name = "R"+str(cnt)
+        cnt += 1
+        data = [
+            ["한자", "훈음", "한자", "훈음"]        # reset
+        ]
+        rnd_list = rndmz.listshuffle(nlist_2)     # shuffle
+        if is_odd:                                # 요소의 홀수 여부 판단
+            rnd_list.append([' ', ' '])
+
+        new_nlist_4 = four2two(rnd_list)
+        for k in range(len(new_nlist_4)):
+            data.append(new_nlist_4[k])
+        generate_pdf(data, name)    # generate PDF file
+    elif c_shuffle == 'n' or c_shuffle == 'N':
+        print("\nprogram ended.")
+        break
+    else:
+        print("INPUT ERROR: Type correct character.")
