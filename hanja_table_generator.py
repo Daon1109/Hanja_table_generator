@@ -11,7 +11,7 @@ import randomizor as rndmz
 def generate_pdf(table_data, name):
 
     # PDF 파일 & 표 생성
-    filename = f"C:/Coding/doodles/hanja_table_{name}.pdf"
+    filename = f"C:/Coding/doodles/hanja_table_result/hanja_table_{name}.pdf"
     pdf = SimpleDocTemplate(filename, pagesize=A4)
     table = Table(
         table_data,
